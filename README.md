@@ -1,9 +1,8 @@
 #Hux Blog
 
-###[View Live Hux Blog &rarr;](https://huangxuan.me)
+###[View Live Hua Blog &rarr;](https://www.huapro.com)
 
-![](http://huangxuan.me/img/blog-desktop.jpg)
-
+![](https://github.com/huapro/huapro.github.io/raw/master/img/blog-desktop.jpg)
 
 
 ## Boilerplate (beta)
