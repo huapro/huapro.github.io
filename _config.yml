@@ -1,11 +1,11 @@
 # Site settings
-title: hua Blog
+title: Hua Blog
 SEOTitle: 木易华的博客 | Hua Blog
 header-img: img/home-bg.jpg
 email: huapro@gmail.com
 description: "关于前端与设计、黑客与画家 | 木易华，Web & Mobile Lover，Software Engineer，UX Designer | 这里是 @hua木易华 的个人博客，与你一起发现更大的世界。"
 keyword: "木易华, hua木易华, hua, 鬼栈, huapro, @huapro, 木易华的博客, hua Blog, 博客, 个人网站, 互联网, Web, JavaScript, 前端, 设计"
-url: "https://huangxuan.me"              # your host, for absolute URL
+url: "https://www.huapro.me"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 
@@ -61,7 +61,7 @@ netease_comment: false
 
 # Google Analytics
 ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-ga_domain: huangxuan.me
+ga_domain: huapro.me
 
 
 
