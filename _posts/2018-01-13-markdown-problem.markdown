@@ -17,7 +17,7 @@ tags:
 
 错误如图
 
-![img](https://github.com/huapro/huapro.github.io/blob/master/img/in-post/post-technical-2018/2018-01-13%20error%20of%20markdown.jpg)
+![img](https://github.com/huapro/huapro.github.io/blob/master/img/in-post/post-technical-2018/2018-01-13-error-of-markdown.jpg)
 
 解决办法
 
