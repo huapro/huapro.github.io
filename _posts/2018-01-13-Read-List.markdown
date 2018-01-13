@@ -6,6 +6,7 @@ date:       2018-01-13 22:36:29
 author:     "Hua"
 header-img: "img/post-bg-js-module.jpg"
 catalog: true
+multilingual: true
 tags:
     - 碎碎念
 ---
