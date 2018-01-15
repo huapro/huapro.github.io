@@ -3,5 +3,5 @@
 > Yet another man.
 
 
-Hi, I am Hua, a software engineer & a designer.
+Hi, I am Hua, a pre-sale engineer&software engineer.
 
