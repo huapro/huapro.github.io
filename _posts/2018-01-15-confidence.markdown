@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "遇到问题，解决问题，记录问题"
-subtitle:   " \"内心若是笃定，何惧未知风雨\""
+title:      "内心若是笃定，何惧未知风雨"
+subtitle:   " \给自己"\""
 date:       2018-01-15 9:17:19
 author:     "Hua"
 header-img: "img/post-bg-2015.jpg"
@@ -10,7 +10,7 @@ tags:
     - 岁月如歌
 ---
 
-> “Yeah It's on. ”
+> “内心若是笃定，何惧未知风雨”
 
 
 ## 1
