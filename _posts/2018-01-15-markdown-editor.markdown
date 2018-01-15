@@ -1,16 +1,14 @@
 ---
 layout:     post
-title:      markdown 语法
-subtitle:   更便捷更高效的工具记录思想，整理笔记、知识，并将其中承载的价值传播给他人
-date:       2018-01-15 11:56:29
-author:     "Hua"
+title:      "markdown 语法"
+subtitle:   "更便捷更高效的工具记录思想，整理笔记、知识，并将其中承载的价值传播给他人"
+date:       2018-01-15 11:56:29
+author:     "Hua"
 header-img: "img/home-bg-o.jpg"
-catalog: false
 tags:
-    -markdown
-    -工具
+    - markdown
+    - 工具
 ---
-
 
 > “是的，就这么零零散散的记一记. ”
 
