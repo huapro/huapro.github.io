@@ -7,7 +7,7 @@ author:     "Hua"
 header-img: "img/home-bg-o.jpg"
 catalog: false
 tags:
-    - 经典著作
+经典著作
 ---
 
 ##道德经
