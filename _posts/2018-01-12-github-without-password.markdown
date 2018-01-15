@@ -13,11 +13,6 @@ tags:
 > “Yeah It's on. ”
 
 
-## 前言
-
-Hux 的 Blog 就这么开通了。
-
-[跳过废话，直接看技术实现 ](#build) 
 
 
 相信大家一定遇到过git和开发工具结合不是很好的情况，pull不下来，push不上去。But we are coder rather than  coolie.  (Just be a Joke!)  这时，git命令行就因其很好的容错提交方便了我们的开发。以下是命令行经常遇到的一问题。
