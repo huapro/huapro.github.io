@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Hello 2018"
-subtitle:   " \"Hello World, Hello Blog\""
+title:      "Are You Ready? Git"
+subtitle:   "Git免密码 "
 date:       2018-01-12 12:00:00
 author:     "Hua"
 header-img: "img/post-bg-2015.jpg"
@@ -58,6 +58,3 @@ helper = store
 
 第一次向新的URL输入用户名密码之后会发现 .git-credentials中追加了类似 https://username:password@hello.com的内容。
 
-Game Over !
-
-——Hua 后记于 2018.01
