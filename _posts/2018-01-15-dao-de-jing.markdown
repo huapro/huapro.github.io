@@ -1,13 +1,13 @@
 ---
 layout:     post
-title:      "道德经"
+title:      道德经
 subtitle:   熟读经典
 date:       2018-01-15 11:59:29
 author:     "Hua"
 header-img: "img/home-bg-o.jpg"
 catalog: false
 tags:
-经典著作
+    - 经典著作
 ---
 
 ##道德经
