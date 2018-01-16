@@ -1,0 +1,397 @@
+---
+layout:     post
+title:      "mabatis配置文件加载过程"
+subtitle:   剖析org.apache.ibatis.io.Resources结构
+date:       2018-01-16 12:09:23
+author:     "Hua"
+header-img: "img/Building-AI-RAJHI.jpg"
+catalog: true
+multilingual: false
+tags:
+    - Mybatis
+---
+
+###mabatis配置文件加载过程
+####程序运行过程
+#####程序结构
+测试类
+```java
+	@Test
+    public void test08() throws IOException{
+  
+/*		Logger logger=Logger.getLogger(Mytest.class);
+				logger.fatal("fatal msg");
+				logger.error("error msg");*/
+     List<Student> students=dao.selectStudentsByName("张");
+     for (Student student:students)
+     {     
+       System.out.println(student);
+      }
+	}
+	
+```
+Dao层实现
+```java
+@Override
+	public List<Student> selectStudentsByName(String name) {
+		// TODO Auto-generated method stub
+		List<Student> students=null;
+		try {
+		    sqlSession=MyBatisUtils.getSqlSession();
+			students=sqlSession.selectList("selectStudentsByName", name);
+		} 	finally{
+			if(sqlSession!=null){
+					sqlSession.close();
+				                    }
+		        }	
+		return students;
+	}
+```
+MyBatisUtils类
+```java
+public class MyBatisUtils {
+	private static SqlSessionFactory sqlSesssionFactory;
+
+	public static SqlSession getSqlSession(){
+		 
+		try {
+			InputStream is = Resources.getResourceAsStream("mybatis.xml");
+			 if (sqlSesssionFactory==null) {
+				sqlSesssionFactory = new SqlSessionFactoryBuilder().build(is);
+			}
+			/* dirty*/
+			return sqlSesssionFactory.openSession();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	
+	}
+```
+重点分析getResourceAsStream("mybatis.xml")是如何获取文件完整路径
+
+整个读取过程围绕**org.apache.ibatis.io.Resources**整个类展开
+```java
+InputStream is = Resources.getResourceAsStream("mybatis.xml");
+```
+进一步调用org.apache.ibatis.io.Resources.getResourceAsStream(String resource)
+```java
+  public static InputStream getResourceAsStream(String resource) throws IOException {
+    return getResourceAsStream(null, resource);
+  }
+```
+
+```java
+  public static InputStream getResourceAsStream(ClassLoader loader, String resource) throws IOException {//由上可知此处loader为null
+    InputStream in = classLoaderWrapper.getResourceAsStream(resource, loader);
+    if (in == null) {
+      throw new IOException("Could not find resource " + resource);
+    }
+    return in;
+  }
+```
+此处classLoaderWrapper为Resources类的静态成员变量，类型为ClassLoaderWrapper
+```java
+public class Resources {
+  private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
+    }
+```
+跟踪**ClassLoaderWrapper**.getResourceAsStream(resource, loader)，记住此处loader仍然为null
+```java
+ public InputStream getResourceAsStream(String resource, ClassLoader classLoader) {
+    return getResourceAsStream(resource, getClassLoaders(classLoader));
+  }
+```
+getClassLoaders(classLoader)应该就是通过获取类加载路径，得到根路径classpath   ；
+getClassLoaders(classLoader)返回ClassLoader[]数组
+classLoader为null
+defaultClassLoader在此过程中没有初始化也为null
+Thread.currentThread().getContextClassLoader().getResource("")得到当前的classpath的绝对路径
+
+```java
+  ClassLoader[] getClassLoaders(ClassLoader classLoader) {
+    return new ClassLoader[]{
+        classLoader,
+        defaultClassLoader,
+        Thread.currentThread().getContextClassLoader(),
+        getClass().getClassLoader(),
+        systemClassLoader};
+  }
+```
+
+跟踪进入**ClassLoaderWrapper**.getResourceAsStream
+至此cl.getResourceAsStream(resource);中resource仍然为文件名，此函数执行完毕则会结合构建路径返回文件输入流InputStream returnValue ；
+**也就是说绝对路径的合成是在cl.getResourceAsStream(resource)中完成**
+```java
+  InputStream getResourceAsStream(String resource, ClassLoader[] classLoader) {
+    for (ClassLoader cl : classLoader) {
+      if (null != cl) {
+
+        // try to find the resource as passed
+        InputStream returnValue = cl.getResourceAsStream(resource);
+
+        // now, some class loaders want this leading "/", so we'll add it and try again if we didn't find the resource
+        if (null == returnValue) {
+          returnValue = cl.getResourceAsStream("/" + resource);
+        }
+
+        if (null != returnValue) {
+          return returnValue;
+        }
+      }
+    }
+    return null;
+  }
+```
+此处有一个疑惑***为什么会进入URLClassLoader类 java.net.URLClassLoader.getResourceAsStream(String name)***；应该是根据cl（ClassLoader ）类型得到。
+
+```java
+    public InputStream getResourceAsStream(String name) {
+        URL url = getResource(name);
+        try {
+            if (url == null) {
+                return null;
+            }
+            URLConnection urlc = url.openConnection();
+            InputStream is = urlc.getInputStream();
+            if (urlc instanceof JarURLConnection) {
+                JarURLConnection juc = (JarURLConnection)urlc;
+                JarFile jar = juc.getJarFile();
+                synchronized (closeables) {
+                    if (!closeables.containsKey(jar)) {
+                        closeables.put(jar, null);
+                    }
+                }
+            } else if (urlc instanceof sun.net.www.protocol.file.FileURLConnection) {
+                synchronized (closeables) {
+                    closeables.put(is, null);
+                }
+            }
+            return is;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+```
+此处parent 为ClassLoader类定义的 private final ClassLoader parent;
+class.getResource("/") == class.getClassLoader().getResource("")
+其实，Class.getResource和ClassLoader.getResource本质上是一样的，都是使用ClassLoader.getResource加载资源的。
+参考以下文章
+[Class.getResource和ClassLoader.getResource的区别分析](http://swiftlet.net/archives/868)
+
+```java
+    public URL getResource(String name) {
+        URL url;
+        if (parent != null) {
+            url = parent.getResource(name);
+        } else {
+            url = getBootstrapResource(name);
+        }
+        if (url == null) {
+            url = findResource(name);//最后由此行获得底层路径
+        }
+        return url;
+    }
+```
+
+***此处需要进一步研究：为什么经由 url = findResource(name）？***
+
+紧接跟进ucp.findResource(name, true),此处ucp（The search path for classes and resources）为URLClassLoader成员变量private final URLClassPath ucp;
+```java
+    public URL findResource(final String name) {
+        /*
+         * The same restriction to finding classes applies to resources
+         */
+        URL url = AccessController.doPrivileged(
+            new PrivilegedAction<URL>() {
+                public URL run() {
+                    return ucp.findResource(name, true);// 跟踪
+                }
+            }, acc);
+
+        return url != null ? ucp.checkURL(url) : null;
+    }
+```
+
+重点关注：***public class URLClassPath ***
+
+```java
+    public URL findResource(String name, boolean check) {
+        Loader loader;
+        for (int i = 0; (loader = getLoader(i)) != null; i++) {  //跟踪
+            URL url = loader.findResource(name, check);
+            if (url != null) {
+                return url;
+            }
+        }
+        return null;
+    }
+```
+
+```java
+    public Enumeration<URL> findResources(final String name,
+                                     final boolean check) {
+        return new Enumeration<URL>() {
+            private int index = 0;
+            private URL url = null;
+
+            private boolean next() {
+                if (url != null) {
+                    return true;
+                } else {
+                    Loader loader;
+                    while ((loader = getLoader(index++)) != null) {
+                        url = loader.findResource(name, check);
+                        if (url != null) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+
+            public boolean hasMoreElements() {
+                return next();
+            }
+
+            public URL nextElement() {
+                if (!next()) {
+                    throw new NoSuchElementException();
+                }
+                URL u = url;
+                url = null;
+                return u;
+            }
+        };
+    }
+
+```
+
+
+```java
+     private synchronized Loader getLoader(int index) {
+        if (closed) {
+            return null;
+        }
+         // Expand URL search path until the request can be satisfied
+         // or the URL stack is empty.
+        while (loaders.size() < index + 1) {
+            // Pop the next URL from the URL stack
+            URL url;
+            synchronized (urls) {
+                if (urls.empty()) {
+                    return null;
+                } else {
+                    url = urls.pop();
+                }
+            }
+            // Skip this URL if it already has a Loader. (Loader
+            // may be null in the case where URL has not been opened
+            // but is referenced by a JAR index.)
+            String urlNoFragString = URLUtil.urlNoFragString(url);
+            if (lmap.containsKey(urlNoFragString)) {
+                continue;
+            }
+            // Otherwise, create a new Loader for the URL.
+            Loader loader;
+            try {
+                loader = getLoader(url);
+                // If the loader defines a local class path then add the
+                // URLs to the list of URLs to be opened.
+                URL[] urls = loader.getClassPath();
+                if (urls != null) {
+                    push(urls);
+                }
+            } catch (IOException e) {
+                // Silently ignore for now...
+                continue;
+            }
+            // Finally, add the Loader to the search path.
+            loaders.add(loader);
+            lmap.put(urlNoFragString, loader);
+        }
+        return loaders.get(index);
+    }
+```
+
+```java
+ URL url =  getClass().getClassLoader().getResource("mybatis.xml");
+     System.out.println(url);
+```
+mabaits文件加载过程首先获取绝对路径，
+
+[关于Class.getResource和ClassLoader.getResource的路径问题参考](http://www.cnblogs.com/yejg1212/p/3270152.html)
+
+
+###总结 
+JAVA获取classpath路径：
+ClassLoader 提供了两个方法用于从装载的类路径中取得资源：
+```java
+public URL  getResource (String name);  
+        public InputStream  getResourceAsStream (String name);  
+```
+这里name是资源的类路径，它是相对与“/”根路径下的位置。getResource得到的是一个URL对象来定位资源，而getResourceAsStream取得该资源输入流的引用保证程序可以从正确的位置抽取数据。但是**
+
+> 真正使用的不是ClassLoader的这两个方法，而是Class的 getResource和getResourceAsStream方法
+
+**，因为Class对象可以从你的类得到（如YourClass.class或 YourClass.getClass()），而ClassLoader则需要再调用一次YourClass.getClassLoader()方法，不过根据JDK文档的说法，
+
+> Class对象的这两个方法其实是“委托”（delegate）给装载它的ClassLoader来做的，所以只需要使用
+> Class对象的这两个方法就可以了。 因此，直接调用this.getClass().getResourceAsStream(String
+> name);获取流，静态化方法中则使用ClassLoader.getSystemResourceAsStream (String name) ; 。
+
+ 下面是一些得到classpath和当前类的绝对路径的一些方法。你可能需要使用其中的一些方法来得到你需要的资源的绝对路径。
+
+**1.this.getClass().getResource（""）** 
+得到的是当前***类class文件的URI目录***。不包括自己！
+如：file：/D：/workspace/jbpmtest3/bin/com/test/
+
+**2.this.getClass().getResource（"/"）** ====**this.getClass() .getClassLoader().getResource（""）**
+得到的是***当前的classpath的绝对URI路径*** 。
+如：file：/D：/workspace/jbpmtest3/bin/
+???可否理解为包外，待进一步研究
+
+**3.this.getClass() .getClassLoader().getResource（""）** 
+得到的也是当前ClassPath的绝对URI路径 。
+如：file：/D：/workspace/jbpmtest3/bin/
+
+**4.ClassLoader.getSystemResource（""）** 
+得到的也是当前ClassPath的绝对URI路径 。
+如：file：/D：/workspace/jbpmtest3/bin/
+
+**5.Thread.currentThread().getContextClassLoader ().getResource（""）** 
+得到的也是当前ClassPath的绝对URI路径 。
+如：file：/D：/workspace/jbpmtest3/bin/
+
+**6.ServletActionContext.getServletContext().getRealPath(“/”)** 
+Web应用程序 中，得到Web应用程序的根目录的绝对路径。这样，我们只需要提供相对于Web应用程序根目录的路径，就可以构建出定位资源的绝对路径。
+如：file：/D:/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/WebProject
+
+注意点：
+
+1.尽量不要使用相对于System.getProperty（"user.dir"）当前用户目录的相对路径。这是一颗定时炸 弹，随时可能要你的命。
+
+2.
+
+> 尽量使用URI形式的绝对路径资源。
+
+它可以很容易的转变为URI，URL，File对象。
+
+3.尽量使用相对classpath的相对路径。不要使用绝对路径。使用上面ClassLoaderUtil类的public static URL getExtendResource（String relativePath）方法已经能够使用相对于classpath的相对路径定位所有位置的资源。
+
+4.
+
+> 绝对不要使用硬编码的绝对路径。
+
+因为，我们完全可以使用ClassLoader类的getResource（""）方法得到当前classpath的绝对路径。如果你一定要指定一个绝对路径，那么使用配置文件，也比硬编码要好得多！
+
+获得CLASSPATH之外路径的方法：
+URL base = this.getClass（）.getResource（""）； //先获得本类的所在位置，如/home/popeye/testjava/build/classes/net/  
+      String path = new File（base.getFile（）， "……/……/……/"+name）.getCanonicalPath（）； //就可以得到/home/popeye/testjava/name
+
+另外，如果从ANT启动程序，this.getClass().getResource("")取出来的比较怪，直接用JAVA命令行调试就可成功。
+
+
+
