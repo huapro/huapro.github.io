@@ -2,7 +2,7 @@
 layout:     post
 title:      "关于售前工程师"
 subtitle:   售前人员应该是项目开发人员与业务销售人员的桥梁，是代表公司技术水平的技术专家
-date:       2018-01-15 21:42:20
+date:       2018-01-16 23:42:20
 author:     "Hua"
 header-img: "img/presale01.jpg"
 catalog: true
