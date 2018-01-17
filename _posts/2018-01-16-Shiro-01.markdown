@@ -61,7 +61,3 @@ Cryptography：密码模块，Shiro提高了一些常见的加密组件用于如
 到此Shiro架构及其组件就认识完了，接下来挨着学习Shiro的组件吧。
  
 参考http://shiro.apache.org/reference.html
- 
-示例源代码：https://github.com/zhangkaitao/shiro-example；
-
-转载自张开涛
