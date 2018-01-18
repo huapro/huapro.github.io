@@ -1,4 +1,17 @@
 
+---
+layout:     post
+title:      "CAN总线要点"
+subtitle:   CAN总线知识
+date:       2018-01-16 19:39:20
+author:     "Hua"
+header-img: "img/Building-Kuwait-Airport.jpg"
+catalog: true
+multilingual: false
+tags:
+    - Consult
+---
+
 <div id="topics">
 	<div class = "post">
 		<h1 class = "postTitle">
