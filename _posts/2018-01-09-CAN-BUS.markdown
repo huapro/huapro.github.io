@@ -177,8 +177,4 @@
 
 
 		</div>
-		<div class = "postDesc">posted @ <span id="post-date">2017-03-31 00:07</span> <a href='http://www.cnblogs.com/spoorer/'>wfjiang</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=6649303" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(6649303);return false;">收藏</a></div>
-	</div>
-	<script type="text/javascript">var allowComments=true,cb_blogId=340509,cb_entryId=6649303,cb_blogApp=currentBlogApp,cb_blogUserGuid='53c6dbe8-7c08-e711-845c-ac853d9f53ac',cb_entryCreatedDate='2017/3/31 0:07:00';loadViewCount(cb_entryId);var cb_postType=1;</script>
-	
-</div>
+
