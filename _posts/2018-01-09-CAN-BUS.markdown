@@ -1,1 +1,788 @@
 
+---
+layout:     post
+title:      "CAN总线要点"
+subtitle:   ——CAN-BUS
+date:       2018-01-09 19:17:19
+author:     "Hua"
+header-img: "img/post-bg-2015.jpg"
+catalog: false
+tags:
+    - CAN-BUS
+---
+
+
+
+
+1.  # 前言
+
+<span style="font-family: 宋体">CAN总线的应用在现在看来越来越广泛，我厂设备从最初的ARM9与ARM7平台、期间升级过度到CortexA8与Cortex M3平台，再到现在的Cortex M4平台，围绕CAN进行了一系列产品的开发，CAN总线的稳定性是毋庸置疑的。
+</span>
+
+1.  # CAN总线物理结构与特性
+
+        1.  ## CAN总线网络
+
+<span style="font-family: 宋体">CAN总线网络主要挂在CAN_H和CAN_L，各个节点通过这两条线实现信号的串行差分传输，为了避免信号的反射和干扰，还需要在CAN_H和CAN_L之间接上120欧姆的终端电阻，但是为什么是120欧姆呢？那是因为<span style="background-color: yellow">电缆的特性阻抗为120欧</span>。
+</span>
+
+![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000637742-1833954398.png)
+
+&nbsp;
+
+1.  ## CAN收发器
+
+<span style="font-family: 宋体"><span style="background-color: yellow">CAN收发器的作用是负责逻辑电平和信号电平之间的转换。</span>
+		</span>
+
+![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000638070-1240976708.png)
+
+<span style="font-family: 宋体">即从CAN控制芯片输出逻辑电平到CAN收发器，然后经过CAN收发器内部转换将逻辑电平转换为差分信号输出到CAN总线上，CAN总线上的节点都可以决定自己是否需要总线上的数据。具体的管教定义如下：
+</span>
+
+![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000638477-914022624.png)
+
+1.  ## 信号表示
+
+<span style="font-family: 宋体">CAN总线采用<span style="background-color: yellow">不归零码位填充技术</span>，也就是说CAN总线上的信号有两种不同的信号状态，分别是显性的（Dominant）逻辑0和隐形的（<a name="OLE_LINK1">recessive）逻辑1，信号每一次传输完后不需要返回到逻辑0（显性）的电平。
+</a></span>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">**位填充规则**：<span style="background-color: yellow">发送器只要检测到位流里有5个连续相同值的位，便自动在位流里插入补充位。</span>
+		</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">观察下图：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000638945-715465019.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">可以看到上图中的当第一段为隐性(recessive)，CAN_H和CAN_L电平几乎一样，也就是说CAN_H和CAN_L电平很接近甚至相等的时候，总线表现隐性的,而两线点位差较大时表现为显性的，按照定义的：
+</span></a>
+
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">CAN_H-CAN_L &lt; 0.5V 时候为隐性的，逻辑信号表现为"逻辑1"- 高电平。
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">CAN_H-CAN_L &gt; 0.9V 时候为显性的，逻辑信号表现为"逻辑0"- 低电平。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">下面将差分信号和显隐性之间对应关系总结为下表：
+</span></a>
+<div style="text-align: center"><table style="border-collapse: collapse" border="0"><colgroup><col style="width: 224px"><col style="width: 199px"><col style="width: 219px"></colgroup><tbody valign="top"><tr style="background: #5b9bd5"><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">状态</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">逻辑信号</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">电压范围</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">显性Dominant</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">0</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体"><a name="OLE_LINK5">CAN_H-CAN_L &gt; 0.9</a></span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体"> 隐性recessive</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">1</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体"><a name="OLE_LINK3">CAN_H-CAN_L &lt; 0.5</a></span>
+</td></tr></tbody></table></div>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">由上面的分析我们可以知道：
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">**<span style="background-color: yellow">CAN总线采用的"线与"的规则进行总线冲裁。即1&amp;0=0；所以0为显性。</span>
+			**</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">这句话隐含的意思是，<span style="background-color: yellow">如果总线上只要有一个节点将总线拉到低电平（逻辑0）即显性状态，总线就为低电平（逻辑0）即显性状态而不管总线上有多少节点处于传输隐性状态（高电平或是逻辑1），只有所有节点都为高（隐性），总线才为高，即隐性。</span>
+		</span></a>
+
+1.  ## <a name="OLE_LINK1">通讯速率与通讯距离
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">下面的</span><span style="color: #444444; font-size: 9pt"><span style="font-family: Tahoma">SAE J2411</span><span style="font-family: 宋体">为美国汽车标准。</span></span><span style="font-family: 宋体">
+		</span></a>
+<div style="text-align: center"><table style="border-collapse: collapse" border="0"><colgroup><col style="width: 75px"><col style="width: 122px"><col style="width: 85px"><col style="width: 361px"></colgroup><tbody valign="top"><tr style="background: #9cc2e5"><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">类型</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">标准</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">最高速率</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">描述</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">高速CAN</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">CAN/ISO 11839-2</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">1Mbit/秒</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">最通用的CAN总线类型</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">低速CAN</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">ISO/ISO 11839-3</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">125Kbit/秒</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">容错，在一条总线短路的时候仍然能工作</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">单线CAN</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="color: #444444; font-family: Tahoma; font-size: 9pt">SAE J2411</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">50Kbit/秒</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">高速模式可达到100Kbit/s主要用在汽车上，例如通用公司</span>
+</td></tr></tbody></table></div>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">CAN总线上任意两个节点的最大传输距离与其位速率有关，如下表：
+</span></a>
+<div style="text-align: center"><table style="border-collapse: collapse" border="0"><colgroup><col style="width: 92px"><col style="width: 61px"><col style="width: 61px"><col style="width: 61px"><col style="width: 61px"><col style="width: 61px"><col style="width: 61px"><col style="width: 61px"><col style="width: 61px"><col style="width: 62px"></colgroup><tbody valign="top"><tr><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">位速率</span><span style="font-family: Arial Unicode MS">/kbps</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">1000</span>
+</td><td style="background: #9cc2e5; padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">500</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">250</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">125</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">100</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">50</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">20</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">10</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">5</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">最大距离</span><span style="font-family: Arial Unicode MS">/m</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">40</span>
+</td><td style="background: #9cc2e5; padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">130</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">270</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">530</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">620</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">1300</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">3300</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">6700</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: Arial Unicode MS">10000</span>
+</td></tr></tbody></table></div>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">这里的最大通信距离指的是同一条总线上两个节点之间的距离。可以看到速率越低通讯距离就越远，也就是说<span style="background-color: yellow">CAN总线的通讯距离和波特率成反比</span>。在位速率为5千比特位每秒的时候达到最大的传输距离10公里。其中一般的工程中<span style="background-color: yellow">比较常用的为500K每秒的通讯速率</span>。这个速率在实际测试的时候也是非常可靠的。
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000639227-478524518.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">如果想要更远的传输（大于10公里）；可以考虑用多个CAN控制器连接或是加其他通讯协议（如485或是TCP/IP）的接口芯片组成的一个设备，这样就可实现长距离的通讯需求。
+</span></a>
+
+1.  # <a name="OLE_LINK1">CAN总线关键概念
+</a>
+
+    1.  ## <a name="OLE_LINK1">仲裁
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">只要总线空闲，总线上任何节点都可以发送报文，如果有两个或两个以上的节点开始传送报文，那么就会存在总线访问冲突的可能。但是CAN使用了标识符的逐位仲裁方法可以解决这个问题。
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000639758-1192104821.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体"><span style="background-color: yellow">在仲裁期间，每一个发送器都对发送的电平与被监控的总线电平进行比较。如果电平相同，则这个单元可以继续发送。如果发送的是一"隐性"电平而监视到的是一"显性"电平，那么这个节点失去了仲裁，必须退出发送状态</span>。如果出现不匹配的位不是在仲裁期间则产生错误事件。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">帧ID越小，优先级越高。由于数据帧的RTR位为显性电平，远程帧为隐性电平，所以帧格式和帧ID相同的情况下，<span style="background-color: yellow">数据帧优先于远程帧</span>；由于标准帧的IDE位为显性电平，扩展帧的IDE位为隐形电平，对于前11位ID相同的标准帧和扩展帧，<span style="background-color: yellow">标准帧优先级比扩展帧高</span>。
+</span></a>
+
+1.  # <a name="OLE_LINK1">CAN总线协议
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">CAN 总线是一个<span style="background-color: yellow">广播类型</span>的总线，所以<span style="background-color: yellow">任何在总线上的节点都可以监听总线上传输的数据</span>。也就是说总线上的传输不是点到点的，而是一点对多点的传输，这里多点的意思是总线上所有的节点。但是总线上的节点如何知道那些数据是传送给自己的呢？CAN总线的硬件芯片提供了一种叫做<span style="background-color: yellow">本地过滤的功能</span>，通过这种<span style="background-color: yellow">本地过滤的功能可以过滤掉一些和自己无关的数据，而保留一些和自己有关的信息</span>。
+</span></a>
+
+1.  ## <a name="OLE_LINK1">CAN消息机制
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">CAN标准定义了四种消息类型，每条消息用一种叫做比特位仲裁(Arbitration)机制来控制进入CAN总线，并且每条消息都标记了优先权。另外CAN标准还定义了一系列的错误处理机制。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">CAN报文的四种消息类型：
+</span></a>
+
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">**数据帧：数据帧将数据从发送器传输到接收器。
+**</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">**远程帧：总线单元发出远程帧，请求发送具有同一标识符的数据帧。
+**</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">**错误帧：任何单元检测到总线错误就发出错误帧。
+**</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">**过载帧：过载帧用在相邻数据帧或远程帧之间的提供附加的延时。
+**</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+1.  ### <a name="OLE_LINK1">数据帧
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">下图为基本的格式：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000640195-1517121830.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">CAN总线中有标准帧和扩展帧两种格式，两种格式不同的地方在于仲裁域格式的不同,看下面两个表格可以很清楚的看出两者的不同,下面第一个表是标准帧（CAN2.0 A），第二个为扩展帧（CAN2.0 B）：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000640508-1236269537.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">下面为扩展帧格式（CAN2.0B）：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000641352-1755681738.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">其中
+</span></a>
+
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">SOF为帧开始
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">SRR为"替代远程请求位
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">IDE为扩展标识符位
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">RTR为远程传输请求位
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">CRC delimiter 为CRC定界符。
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">ACK delimiter 为应答定界符.
+</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">我们看到上图中的基本帧格式可以总结为以下几个域：
+</span></a>
+<div style="text-align: center"><table style="border-collapse: collapse" border="0"><colgroup><col style="width: 66px"><col style="width: 576px"></colgroup><tbody valign="top"><tr style="background: #9cc2e5"><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">域</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">描述</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">仲裁域</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">仲裁域决定了当总线上两个或是多个节点争夺总线时的优先权。</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">数据域</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">包含了0到8字节的数据。</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">CRC域</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">包含了15位的校验和，校验和用来做错误检测。</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">应答槽</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">任何一个已经正确接收到消息的控制器在每一条消息的末端发送一个应答位，发送器检查消息是否存在应答位，如果没有就重发消息。</span>
+</td></tr></tbody></table></div>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+1.  ### <a name="OLE_LINK1">远程帧
+</a>
+
+<a name="OLE_LINK1">作为数据接收器的站，通过发送远程帧，可以启动其资源节点传送它们各自的数据。远程帧和数据帧非常类似，只是远程帧没有数据域。
+</a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000641664-1046140974.png)
+	</a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">上图就是远程帧的帧格式，它相对与数据帧没有远程帧，但是要注意发送远程帧的时候RTR位要置1，表示发送的是远程帧。下图更加清晰了呈现了这种结构。
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000642024-494708682.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000642399-1582807274.png)<span style="font-family: 宋体">
+		</span></a>
+
+1.  ### <a name="OLE_LINK1">错误帧
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体"><span style="background-color: yellow">错误帧是当总线的某一个节点检测到错误后发送出来的，它会引起所有节点检测到一个错误，所以当有任何一个节点检测到错误，总线上的其他节点也会发出错误帧</span>。CAN总线设计了一套详尽的错误计数机制来确保不会由于任何一个节点反复的发送错误帧而导致CAN总线的崩溃。
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000642711-1241138299.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">如上图所示错误标志和错误定界符组成，高低代表分别代表隐性和显性，其中**错误标志为所有节点发过来的错误标志的叠加(Superposition)。**下图更为清楚的看出各个数据位的分布：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000643070-389795678.png)<span style="font-family: 宋体">**
+			**</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000643539-1928712523.png)<span style="font-family: 宋体">**
+			**</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">下面通过以下数据结构框图概括各个部分的定义：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000644102-1606289185.png)<span style="font-family: 宋体">**
+			**</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">错误标志有两种形式：
+</span></a>
+
+*   <a name="OLE_LINK1"><span style="font-family: 宋体">主动错误标志，它由6个连续的显性位0组成，它是节点主动发送的错误标志。
+</span></a>
+*   <div><a name="OLE_LINK1"><span style="font-family: 宋体">被动错误标志，它由6个连续的隐性位1组成，除非被其他节点的显性位覆盖。
+</span></a></div>
+
+    <a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">刚才说到一个节点上检测到错误会导致总线上所有的节点都会检测到错误并发送错误标志，这是为什么呢？
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">因为单一节点上的错误标志格式违背了从帧起始到CRC界定符的位填充规则，也破坏了ACK域或帧结尾的固定格式。下面简要说下位填充规则。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体"><span style="background-color: yellow">位填充规则：发送器只要检测到位流里有5个连续相同值的位，便自动在位流里插入补充位。</span>
+				</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">注意：位填充规则只是针对数据帧和远程帧，错误帧和过载帧格式固定。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">&nbsp;&nbsp;&nbsp;&nbsp;所以所有其他的节点会检测到错误条件并且开始发送错误标志，因此错误帧就是各个站的不同错误标志叠加在一起的结果。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">当某个节点发送错误帧(带有错误标志)，其他节点收到了错误帧，检测到错误条件，就通过发送"被动错误标志"的错误帧来提示错误。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">错误定界符：
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">传送了错误标志以后，每一个站就发送一个隐性位，并一直监视总线直到检测出一个隐性位为止，然后就开始发送其余7个隐性位。
+</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+1.  ### <a name="OLE_LINK1">过载帧
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体"><span style="background-color: yellow">过载帧是接收节点用来向发送节点告知自身接收能力的帧。</span>
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">过载帧，意思就是某个接收节点来不及处理数据了，希望其他节点慢点发送数据帧或者远程帧，所以告诉发送节点，我已经没有能力处理你发送过来的数据了。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">过载帧跟错误帧结构类似包括过载标志和过载定界符，有3中情况会引起过载：
+</span></a>
+
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">接收器内部的原因，它需要延迟下一个数据帧或是远程帧。
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">在间歇字段（看下面的帧间空间）的第一位和第二位检测到一个显性位（间歇字段都是隐性位的）
+</span></a>
+*   <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">如果CAN节点在错误界定符或是过载界定符的第八位(最后一位)采样到一个显性位逻辑0，节点会发送一个过载帧，错误计数器不会增加。
+</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000644602-2086934751.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000645430-1668163368.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">上图中很清晰的表示了过载标志有6个显性位组成，而叠加部分和"主动错误"标志一样，过载的标志破坏的是间歇域的固定格式。所以导致其他的节点都检测到过载条件，并一同发出过载标志。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">**过载定界符：
+**</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">也就是上图的过载结束符，过载标志被传送以后，节点就一直监听着总线，直到检测到有一个从显性位到隐性位的跳变为止。当从总线上检测到这样的跳变，则就标志着每一个节点都完成了各自过载标志的发送，并开始同时发送其余7个隐性位。
+</span></a>
+
+1.  ### <a name="OLE_LINK1">帧间空间(Interframe Space)
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">帧间空间说白了就是帧与帧之间的间隔，但是这种间隔在CAN的帧中<span style="background-color: yellow">只存在于数据帧和远程帧</span>，其他的帧就不一定是帧间空间隔开的，而是其他形式，或是直接是没有间隔，例如过载帧和错误帧之间就没帧间空间。过个过载帧之间有间隔但是不是有帧间空间隔开的。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">这里所说的针间空间包括"间歇"、"总线空闲"的位域。如果是发送前一报文的"被动错误"的站，则还包括叫做"挂起传输"的位域。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">若不是"被动错误"的站，或作为前一报文的接收器的站，帧间空间格式为下图：
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000646024-1915666309.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000646383-728975830.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">若是"<span style="color: red">**被动错误**</span>"的站，如果想要发送8个隐性电平，在发送其他帧，帧间空间格式为下图，即包括了挂起传输，
+</span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000646680-626228504.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">可以看到
+</span></a>
+
+1.  <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">**间歇字段**有3个隐性位。
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">特别的在间歇期间，所有的节点都不允许传送数据帧和远程帧，唯一看做的是标示一个过载条件。
+</span></a>
+
+1.  <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">**总线空闲**：
+</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">只要总线空闲，任何节点就可以往总线发送数据，并且是开始于间歇之后的第一个位。一旦总线上检测到显性位即逻辑"0"，可以认为是帧的开始。
+</span></a>
+
+1.  <a name="OLE_LINK1"><span style="font-family: 宋体; font-size: 12pt">**挂起传输
+**</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">"被动错误"的节点发送报文之后<span style="background-color: yellow">，在下一个报文开始传送之前或是确认总线空闲之前发出8个隐性位跟随在间歇的后面</span>。如果这个时候有一个报文从其他的节点发过来，则这个节点就成为了接收器。
+</span></a>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+1.  ## <a name="OLE_LINK1">错误处理机制
+</a>
+
+    1.  ### <a name="OLE_LINK1">错误侦测
+</a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">下标是几个错误类型：
+</span></a>
+<div style="text-align: center"><table style="border-collapse: collapse" border="0"><colgroup><col style="width: 104px"><col style="width: 19px"><col style="width: 227px"><col style="width: 227px"><col style="width: 73px"></colgroup><tbody valign="top"><tr style="background: #9cc2e5"><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">错误类型</span>
+</td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">出错条件</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">出错域</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">帧测单元</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">比特错误
+</span>
+
+<span style="font-family: 宋体">bit error</span>
+</td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体"><span style="background-color: yellow">发送的位值与所监控的位值不相符合</span>（填充比特和ACK比特除外）</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">数据帧<a name="OLE_LINK7">(SOF~EOF)
+</a></span>
+
+<a name="OLE_LINK7"><span style="font-family: 宋体">远程帧(SOF~EOF)
+</span></a>
+
+<a name="OLE_LINK7"><span style="font-family: 宋体">错误帧
+</span></a>
+
+<a name="OLE_LINK7"><span style="font-family: 宋体">过载帧</span></a>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">发送单元
+</span>
+
+<span style="font-family: 宋体">接收单元</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">填充错误stuff error</span>
+</td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体; background-color: yellow">侦测到6个连续相同的电平</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">数据帧(SOF~CRC)
+</span>
+
+<span style="font-family: 宋体">远程帧(SOF~CRC)</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">发送单元
+</span>
+
+<span style="font-family: 宋体">接收单元</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">CRC 错误</span>
+</td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">计算结果和接收到的CRC不同</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">数据帧(CRC)
+</span>
+
+<span style="font-family: 宋体">远程帧(CRC)</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">接收单元</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">格式错误
+</span>
+
+<span style="font-family: 宋体">Form Error</span>
+</td><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">某个固定的格式位置出现无效的比特</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">数据帧：
+</span>
+
+<span style="font-family: 宋体">(CRC Delimiter, ACK Delimiter EOF)
+</span>
+
+<span style="font-family: 宋体">远程帧：
+</span>
+
+<span style="font-family: 宋体">(CRC Delimiter，ACK Delimiter)
+</span>
+
+<span style="font-family: 宋体">错误帧：
+</span>
+
+<span style="font-family: 宋体">(Error Frame Delimiter)
+</span>
+
+<span style="font-family: 宋体">过载帧：
+</span>
+
+<span style="font-family: 宋体">(Overload Delimiter)</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">接收单元</span>
+</td></tr><tr><td colspan="2" style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">应答错误
+</span>
+
+<span style="font-family: 宋体">Acknowledgment</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">发送端在应答间隙所监视的位不为显性，即逻辑0，发送器就检测到一个应答错误。</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">数据帧(ACK slot)
+</span>
+
+<span style="font-family: 宋体">远程帧(ACK slot）</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">发送单元
+</span>
+</td></tr></tbody></table></div>
+
+1.  ### <a name="OLE_LINK1">错误计数
+</a>
+
+<a name="OLE_LINK1">下面是错误计数表：
+</a>
+<div style="text-align: center"><table style="border-collapse: collapse" border="0"><colgroup><col style="width: 84px"><col style="width: 280px"><col style="width: 122px"><col style="width: 156px"></colgroup><tbody valign="top"><tr><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">&nbsp;</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">错误条件</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">Transmit Error Counter</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: solid 0.5pt; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">Receive Error Counter</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">1</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">RECEIVER端侦测到一个位Error错误，除了发送ACTIVE ERROR FLAG 和OVERLOAD FLAG</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">-</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">+1</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">2</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">TRANSMITIER 发送ERROR FLAG</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">+8</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">&nbsp;</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">3</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">TRANSMITTER发送ACTIVE ERROR FLAG OVERFLAG时侦测到BIT ERROR</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">+8</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">&nbsp;</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">4</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">当RECEIVER发送ACTIVE ERROR FLAG或OVERFLAG时侦测到BIT ERROR</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">+8</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">&nbsp;</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">5</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">一个帧被成功发送之后（取得ACK并且知道END OF FRAME完成都没有错误）</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">-1 IF TEC=0,TEC will not be changed</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">-</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">6</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">一个帧被成功接收（知道ACK域都没有检测到错误，并成功发送ACK比特）</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">-</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">1. if 1 &lt;= REC &lt;= 127 -&gt; REC-1
+</span>
+
+<span style="font-family: 宋体">2. if REC = 0 -&gt; REC = 0
+</span>
+
+<span style="font-family: 宋体">3. if REC &gt; 127 -&gt; REC = a value
+</span>
+
+<span style="font-family: 宋体">Between 119 to 127</span>
+</td></tr><tr><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: solid 0.5pt; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">7</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">在总线上检测到128此连续的11个1，"bus off"的节点允许变成不再是"bus off"</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">Cleared to TEC = 0</span>
+</td><td style="padding-left: 7px; padding-right: 7px; border-top: none; border-left: none; border-bottom: solid 0.5pt; border-right: solid 0.5pt">
+
+<span style="font-family: 宋体">Cleared to REC = 0</span>
+</td></tr></tbody></table></div>
+
+<a name="OLE_LINK1">
+&nbsp;</a>
+
+1.  ### <a name="OLE_LINK1">错误抑制
+</a>
+
+<a name="OLE_LINK1"><span style="color: red"><span style="font-family: 宋体; background-color: yellow">为防止某些节点自身出错而一直发送错误帧，干扰其他节点通信，</span><span style="font-family: Verdana; background-color: yellow">CAN</span><span style="font-family: 宋体; background-color: yellow">协议规定了节点的</span><span style="font-family: Verdana; background-color: yellow">3</span><span style="font-family: 宋体; background-color: yellow">种状态及行为</span><span style="font-family: Verdana; background-color: yellow">,</span><span style="font-family: 宋体; background-color: yellow">如下图：</span><span style="font-family: Verdana">
+			</span></span></a>
+
+<a name="OLE_LINK1">![](https://images2015.cnblogs.com/blog/1125535/201703/1125535-20170331000646992-2067320030.png)<span style="font-family: 宋体">
+		</span></a>
+
+<a name="OLE_LINK1"><span style="font-family: 宋体">一个节点挂到CAN总线上之后，处于ACTIVE状态；TEC&gt;127或者REC&gt;127导致节点进入passive状态；TEC&gt;255之后节点处于bus off状态，就是不允许再往bus上发送东西了；处于bus off状态的节点，在检测到128个连续的11个1之后将回到active状态。
+</span></a>
+
