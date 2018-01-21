@@ -2,9 +2,9 @@
 layout:     post
 title:      "SpringMVC"
 subtitle:   "SpringMVC学习归档"
-date:       2018-01-21 12:39:00
+date:       2018-01-21 23:39:00
 author:     "Hua"
-header-img: "img\in-post\2018-01-21-SpringMCV-Learn\网络.JPG"
+header-img: "img/in-post/2018-01-21-SpringMCV-Learn/网络.JPG"
 catalog: true
 multilingual: false
 tags:
