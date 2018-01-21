@@ -2,7 +2,7 @@
 layout:     post
 title:      "Are You Ready? Git"
 subtitle:   "Github学习"
-date:       2018-01-21 12:00:00
+date:       2018-01-21 12:40:00
 author:     "Hua"
 header-img: "img\in-post\2018-01-21-SpringMCV-Learn\springmvc-head.JPG"
 catalog: true
