@@ -2,7 +2,7 @@
 layout:     post
 title:      "Are You Ready? Git"
 subtitle:   "Git提交免密码 "
-date:       2018-01-12 12:00:00
+date:       2018-01-21 12:00:00
 author:     "Hua"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
