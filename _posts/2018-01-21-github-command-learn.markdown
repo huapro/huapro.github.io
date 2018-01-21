@@ -1,17 +1,17 @@
 ---
 layout:     post
 title:      "Are You Ready? Git"
-subtitle:   "Git提交免密码 "
+subtitle:   "Github学习"
 date:       2018-01-21 12:00:00
 author:     "Hua"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img\in-post\2018-01-21-SpringMCV-Learn\springmvc-head.JPG"
 catalog: true
 multilingual: false
 tags:
     - github
 ---
 
->“Yeah It’s on. ”
+>“Github应用总结 ”
 
 ##     git避免重复输入用户名密码。
 相信大家一定遇到过git和开发工具结合不是很好的情况，pull不下来，push不上去。But we are coder rather than  coolie.  (Just be a Joke!)  这时，git命令行就因其很好的容错提交方便了我们的开发。以下是命令行经常遇到的一问题。
