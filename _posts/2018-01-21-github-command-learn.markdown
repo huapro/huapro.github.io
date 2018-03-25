@@ -1,15 +1,17 @@
 ---
 layout:     post
-title:      "Are You Ready? Git"
-subtitle:   "Github学习"
-date:       2018-01-21 12:40:00
+title:      "Github"
+subtitle:   "Github 命令总结 "
+date:       2018-03-24 17:39:00
 author:     "Hua"
-header-img: "img\in-post\2018-01-21-SpringMCV-Learn\springmvc-head.JPG"
+header-img: "img/网络.JPG"
 catalog: true
 multilingual: false
 tags:
-    - github
+- github
 ---
+
+Github命令
 
 >“Github应用总结 ”
 

@@ -1,14 +1,14 @@
 ---
 layout:     post
-title:      "MarkDown on OS"
-subtitle:   " \"迭代，反复迭代\""
-date:       2018-01-13 22:36:29
+title:      "Blog serve on Mac test"
+subtitle:   extension project
+date:       2018-03-25 19:38:20
 author:     "Hua"
-header-img: "img/post-bg-js-module.jpg"
+header-img: "img/Building-Kuwait-Airport.jpg"
 catalog: true
 multilingual: false
 tags:
-    - 碎碎念
+    - Consult
 ---
 
 > “是的，就这么零零散散的记一记. ”
