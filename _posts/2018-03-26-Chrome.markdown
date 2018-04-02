@@ -1,0 +1,25 @@
+---
+layout:     post
+title:      "Chrome"
+subtitle:   "Chrome 命令总结 "
+date:       2018-03-24 17:39:00
+author:     "Hua"
+header-img: "img/网络.JPG"
+catalog: true
+multilingual: false
+tags:
+- chrome
+---
+
+Chrome技巧
+
+>“Github应用总结 ”
+
+
+## 清除Chrome DNS缓存
+打开[chrome://net-internals/#dns ](chrome://net-internals/#dns )右上角有个箭头，下拉，需要点击Clear cache 和 Flush sockets 两项才能清除&lt;img 
+
+
+
+
+

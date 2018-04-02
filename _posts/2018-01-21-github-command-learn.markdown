@@ -12,7 +12,7 @@ tags:
 ---
 
 Github命令
-
+xbk
 >“Github应用总结 ”
 
 ##     git避免重复输入用户名密码。
