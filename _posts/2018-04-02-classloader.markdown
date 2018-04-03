@@ -190,3 +190,260 @@ Reference
 
  <http://my.oschina.net/u/571166/blog/212903>
 
+##org.apache.catalina.startup.Bootstrap's main method handles 'startd' or 'stopd' wrongly
+
+ASF Bugzilla – Bug 47881	org.apache.catalina.startup.Bootstrap's main method handles 'startd' or 'stopd' wrongly	Last modified: 2009-11-02 16:47:52 UTC
+Home | New | Browse | Search |  
+  Search [?] | Reports | Help | New Account | Log In | Forgot Password
+Bug 47881 - org.apache.catalina.startup.Bootstrap's main method handles 'startd' or 'stopd' wrongly
+Status:	RESOLVED FIXED
+Alias:	None
+Product:	Tomcat 6
+Component:	Catalina (show other bugs)
+Version:	6.0.20
+Hardware:	PC Linux
+Importance:	P2 minor (vote)
+Target Milestone:	default
+Assignee:	Tomcat Developers Mailing List
+URL:	
+Keywords:	
+Duplicates (1):	48059 (view as bug list)
+Depends on:	
+Blocks:	
+ 
+Reported:	2009-09-20 19:14 UTC by qingyang.xu
+Modified:	2009-11-02 16:47 UTC (History)
+CC List:	0 users
+
+
+Attachments
+Add an attachment (proposed patch, testcase, etc.)
+
+Note
+You need to log in before you can comment on or make changes to this bug.
+Description qingyang.xu 2009-09-20 19:14:04 UTC
+String command = "start";
+if (args.length > 0) {
+    command = args[args.length - 1];
+}
+
+if (command.equals("startd")) {
+    args[0] = "start";
+    daemon.load(args);
+    daemon.start();
+} else if (command.equals("stopd")) {
+    args[0] = "stop";
+    daemon.stop();
+} 
+... ...
+
+
+should be: 
+
+String command = "start";
+if (args.length > 0) {
+    command = args[args.length - 1];
+}
+if (command.equals("startd")) {
+    args[args.length - 1] = "start";
+    daemon.load(args);
+    daemon.start();
+} else if (command.equals("stopd")) {
+    args[args.length - 1] = "stop";
+    daemon.stop();
+} 
+... ...
+
+Please refer to the following usage method of  org.apache.catalina.startup.Catalina:
+protected void usage() {
+
+        System.out.println
+            ("usage: java org.apache.catalina.startup.Catalina"
+             + " [ -config {pathname} ]"
+             + " [ -nonaming ] { start | stop }");
+
+    }
+Comment 1 Konstantin Kolinko 2009-10-08 05:31:24 UTC
+Actually, I do not see startd and stopd commands to be documented anywhere. Maybe we can just safely remove them?
+
+With startd, Tomcat will exit immediately upon startup. Though it may be useful for testing config files.
+
+With stopd ... you cannot stop server that is not running.
+
+And if you have an instance of Bootstrap, you can call load/start/stop directly, not relying on how Bootstrap#main() parses the arguments.
+
+Regarding the patch: args are not used in "stopd", that line can be omitted completely, or we can do as OP proposes. Regarding "startd": yes, the fix is correct.
+Comment 2 qingyang.xu 2009-10-08 16:20:38 UTC
+(In reply to comment #1)
+> Actually, I do not see startd and stopd commands to be documented anywhere.
+> Maybe we can just safely remove them?
+> 
+> With startd, Tomcat will exit immediately upon startup. Though it may be useful
+> for testing config files.
+> 
+> With stopd ... you cannot stop server that is not running.
+> 
+> And if you have an instance of Bootstrap, you can call load/start/stop
+> directly, not relying on how Bootstrap#main() parses the arguments.
+> 
+> Regarding the patch: args are not used in "stopd", that line can be omitted
+> completely, or we can do as OP proposes. Regarding "startd": yes, the fix is
+> correct.
+
+
+(In reply to comment #1)
+> Actually, I do not see startd and stopd commands to be documented anywhere.
+> Maybe we can just safely remove them?
+> 
+> With startd, Tomcat will exit immediately upon startup. Though it may be useful
+> for testing config files.
+> 
+> With stopd ... you cannot stop server that is not running.
+> 
+> And if you have an instance of Bootstrap, you can call load/start/stop
+> directly, not relying on how Bootstrap#main() parses the arguments.
+> 
+> Regarding the patch: args are not used in "stopd", that line can be omitted
+> completely, or we can do as OP proposes. Regarding "startd": yes, the fix is
+> correct.
+
+
+The only difference between 'startd' and 'start' is that 'startd' doesn't invoke Catalina's await() method after the server has been started, or 'startd' doesn't need to allocate a 'SHUTDOWN' port to listening to be sent a 'SHUTDOWN' message. 'stopd' is the counterpart of 'stop'. If tomcat is started by 'startd', you must invoke 'stopd' to shutdown it, otherwise the server can't  be stopped, because 'stop' invoke Catalina's stopServer() method, which relies on the allocated 'SHUTDOWN' port exclusively. On the contrary, 'stopd' invokes Catalina's stop() method instead, which invoke server's stop() method directly. Below is the two different methods invoked by 'stop' and 'stopd':
+
+
+//invoked by 'stop'
+public void stopServer() {
+        stopServer(null);
+    }
+
+    public void stopServer(String[] arguments) {
+
+        if (arguments != null) {
+            arguments(arguments);
+        }
+
+        if( server == null ) {
+            // Create and execute our Digester
+            Digester digester = createStopDigester();
+            digester.setClassLoader(Thread.currentThread().getContextClassLoader());
+            File file = configFile();
+            try {
+                InputSource is =
+                    new InputSource("file://" + file.getAbsolutePath());
+                FileInputStream fis = new FileInputStream(file);
+                is.setByteStream(fis);
+                digester.push(this);
+                digester.parse(is);
+                fis.close();
+            } catch (Exception e) {
+                log.error("Catalina.stop: ", e);
+                System.exit(1);
+            }
+        }
+
+        // Stop the existing server
+        try {
+            if (server.getPort()>0) {
+            	String hostAddress = InetAddress.getByName("localhost").getHostAddress();
+            	Socket socket = new Socket(hostAddress, server.getPort());
+            	OutputStream stream = socket.getOutputStream();
+            	String shutdown = server.getShutdown();
+            	for (int i = 0; i < shutdown.length(); i++)
+            		stream.write(shutdown.charAt(i));
+            	stream.flush();
+            	stream.close();
+            	socket.close();
+            } else {
+                log.error(sm.getString("catalina.stopServer"));
+                System.exit(1);
+            }
+        } catch (IOException e) {
+            log.error("Catalina.stop: ", e);
+            System.exit(1);
+        }
+
+    }
+
+
+    // invoked by 'stopd'
+    public void stop() {
+
+        try {
+            // Remove the ShutdownHook first so that server.stop() 
+            // doesn't get invoked twice
+            if (useShutdownHook) {
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            }
+        } catch (Throwable t) {
+            // This will fail on JDK 1.2. Ignoring, as Tomcat can run
+            // fine without the shutdown hook.
+        }
+
+        // Shut down the server
+        if (server instanceof Lifecycle) {
+            try {
+                ((Lifecycle) server).stop();
+            } catch (LifecycleException e) {
+                log.error("Catalina.stop", e);
+            }
+        }
+
+    }
+
+
+My suggestion: We don't need to remove 'startd' and 'stopd', they are useful in some situations. The only place we need to correct is the Bootstrap's main() method, as in the patches I have submitted. Thanks!
+Comment 3 Konstantin Kolinko 2009-10-09 01:42:03 UTC
+With "startd", as there is no "await", the method completes immediately (and the application quits).
+
+That it is only useful if exiting that "main" method does not complete the application. Thus if it is not the actual entry point of the application. If so, does anyone need to use it that way?
+Comment 4 qingyang.xu 2009-10-09 02:00:01 UTC
+(In reply to comment #3)
+> With "startd", as there is no "await", the method completes immediately (and
+> the application quits).
+> 
+> That it is only useful if exiting that "main" method does not complete the
+> application. Thus if it is not the actual entry point of the application. If
+> so, does anyone need to use it that way?
+
+
+Yes, you are totally right. After the main method ends, all the daemon threads (such as 'http-8080-Acceptor-0', 'TP-Processor', etc.) will end too. I never thought of this consequence. So, what's the point of 'startd' and 'stopd', anyway?
+Comment 5 Filip Hanik 2009-10-09 06:48:53 UTC
+(In reply to comment #4)
+> (In reply to comment #3)
+> > With "startd", as there is no "await", the method completes immediately (and
+> > the application quits).
+> > 
+> > That it is only useful if exiting that "main" method does not complete the
+> > application. Thus if it is not the actual entry point of the application. If
+> > so, does anyone need to use it that way?
+> 
+> Yes, you are totally right. After the main method ends, all the daemon threads
+> (such as 'http-8080-Acceptor-0', 'TP-Processor', etc.) will end too. I never
+> thought of this consequence. So, what's the point of 'startd' and 'stopd',
+> anyway?
+
+
+####public static void main(String[] args) can be called from another Java class, its not exclusive to the JVM
+
+It would be a different way of embedding Tomcat, at which point one wants the thread to return
+Comment 6 qingyang.xu 2009-10-09 18:39:20 UTC
+> public static void main(String[] args) can be called from another Java class,
+> its not exclusive to the JVM
+> 
+> It would be a different way of embedding Tomcat, at which point one wants the
+> thread to return
+
+
+Understood. So my patch is still relevant, right?
+Comment 7 qingyang.xu 2009-10-26 17:38:23 UTC
+
+*** This bug has been marked as a duplicate of bug 48059 ***
+Comment 8 Konstantin Kolinko 2009-11-02 02:45:38 UTC
+Reduced severity. There is nothing in this issue that makes it "critical".
+Comment 9 Konstantin Kolinko 2009-11-02 02:46:05 UTC
+*** Bug 48059 has been marked as a duplicate of this bug. ***
+Comment 10 Konstantin Kolinko 2009-11-02 03:04:19 UTC
+Fixed in trunk, proposed for TC 6.0
+Comment 11 Mark Thomas 2009-11-02 16:47:52 UTC
+This has been applied to 6.0.x and will be included in 6.0.21 onwards.
+
