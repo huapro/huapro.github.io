@@ -32,7 +32,7 @@ Like swimming, read history, like Beijing opera
 
 ## Work Experience
 
-##### 2015/4-Present	Otis Electric Elevator Co Ltd   International Bussness Department  Presale Engineer
+##### 2015/4-2018/4	Otis Electric Elevator Co Ltd   International Bussness Department  Presale Engineer
 
 **Description：**	
 <br>1、Review the technical specifications and customer requirements of the new elevators &escalators in Kuwait and Israel France market .To provide technical support in the bidding phase, contract negotiation and quotation stages for new project.Coordinate and manage cross-departmental reviews for major&complex projects;
