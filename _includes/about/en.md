@@ -4,7 +4,7 @@
 
 
 Hi, I am Hua, a pre-sale engineer&electric engineer.
-Like swimming, read history, like Beijing opera，bridge
+Like swimming, read history, like Beijing opera,bridge
 
 
 
