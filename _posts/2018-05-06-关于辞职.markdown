@@ -2,7 +2,7 @@
 layout:     post
 title:      "关于辞职的复盘"
 subtitle:   ——不得不走的弯路
-date:       2018-05-06  09:17:00
+date:       2018-05-02  09:17:00
 author:     "Hua"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
@@ -73,4 +73,4 @@ tags:
 
 
 
-2018-05-06  11:16 Charles
+2018-05-02  20:16 Charles
