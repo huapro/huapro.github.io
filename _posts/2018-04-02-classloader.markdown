@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "ClassLoader，Thread.currentThread().setContextClassLoader，tomcat的ClassLoader"
+title:      "TOMCAT ClassLoader"
 subtitle:   extension project
 date:       2018-04-02 19:38:20 
 author:     "Hua"
@@ -210,7 +210,7 @@ Keywords:
 Duplicates (1):	48059 (view as bug list)
 Depends on:	
 Blocks:	
- 
+
 Reported:	2009-09-20 19:14 UTC by qingyang.xu
 Modified:	2009-11-02 16:47 UTC (History)
 CC List:	0 users
@@ -261,7 +261,7 @@ protected void usage() {
             ("usage: java org.apache.catalina.startup.Catalina"
              + " [ -config {pathname} ]"
              + " [ -nonaming ] { start | stop }");
-
+    
     }
 Comment 1 Konstantin Kolinko 2009-10-08 05:31:24 UTC
 Actually, I do not see startd and stopd commands to be documented anywhere. Maybe we can just safely remove them?
@@ -315,13 +315,13 @@ The only difference between 'startd' and 'start' is that 'startd' doesn't invoke
 public void stopServer() {
         stopServer(null);
     }
-
+    
     public void stopServer(String[] arguments) {
-
+    
         if (arguments != null) {
             arguments(arguments);
         }
-
+    
         if( server == null ) {
             // Create and execute our Digester
             Digester digester = createStopDigester();
@@ -340,7 +340,7 @@ public void stopServer() {
                 System.exit(1);
             }
         }
-
+    
         // Stop the existing server
         try {
             if (server.getPort()>0) {
@@ -361,13 +361,13 @@ public void stopServer() {
             log.error("Catalina.stop: ", e);
             System.exit(1);
         }
-
+    
     }
 
 
     // invoked by 'stopd'
     public void stop() {
-
+    
         try {
             // Remove the ShutdownHook first so that server.stop() 
             // doesn't get invoked twice
@@ -378,7 +378,7 @@ public void stopServer() {
             // This will fail on JDK 1.2. Ignoring, as Tomcat can run
             // fine without the shutdown hook.
         }
-
+    
         // Shut down the server
         if (server instanceof Lifecycle) {
             try {
@@ -387,7 +387,7 @@ public void stopServer() {
                 log.error("Catalina.stop", e);
             }
         }
-
+    
     }
 
 
