@@ -1,14 +1,14 @@
 ---
 layout:     post
-title:      "系统集成项目管理工程师"
-subtitle:   软考中级考试
+title:      "软考考试"
+subtitle:   知识点汇总
 date:       2018-05-06  08:43:00
 author:     "Hua"
 header-img: "img/presale01.jpg"
 catalog: true
 multilingual: false
 tags:
-    - 系统集成
+    - 软考
 ---
 
 > 系统集成项目管理工程师
