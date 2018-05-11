@@ -8,7 +8,7 @@ header-img: "img/presale01.jpg"
 catalog: true
 multilingual: false
 tags:
-    - Consult
+    - 售前
 ---
 
 > 细细想来从事海外售前工作快三年了，
