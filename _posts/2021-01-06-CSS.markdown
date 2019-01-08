@@ -3,7 +3,7 @@ layout:     post
 title:      "CSS 学习"
 subtitle:   "CSS学习"
 date:       2019-01-08  10:55:00
-author:     "Hua"
+author:     "Hua"v
 header-img: "img/presale01.jpg"
 catalog: true
 multilingual: false
@@ -14,17 +14,19 @@ tags:
 
 # CSS
 ## 一:Force element state
-1、：active
+1、：active  
 :active向活动的链接添加特殊的样式。
 当你点击一个链接时它变成活动链接。（即点击链接时候会产生一个效果）
-2、：hover
-:hover在鼠标移到链接上时添加的特殊样式。（鼠标悬停到连接时产生一个效果）
-3、：focus
-选择具有焦点的输入元素（即根据焦点确定选中的元素）
-4、：visited
+<br>
+2、：hover  
+:hover在鼠标移到链接上时添加的特殊样式。（鼠v标悬停到连接时产生一个效果）
+3、：focus  
+选择具有焦点的输入元素（即根据焦点确定选中的元素）  
+4、：visited  
 :visited向访问过的链接添加特殊的样式。（即访问过后，链接样式会产生改变以标识）
-5、：focus-within
+<br>
+5、：focus-within  
 一个元素获得焦点，或，该元素的后代元素获得焦点。划重点，它或它的后代获得焦点。
 这也就意味着，它或它的后代获得焦点，都可以触发 :focus-within。（冒泡性，从可获焦元素开始一直冒泡到根元素 html,由此在获取焦点的时候能够激活很多效果）
-[:focus-within参考文章](https://www.cnblogs.com/coco1s/p/9406413.html)
+[focus-within参考文章](https://www.cnblogs.com/coco1s/p/9406413.html)
 
