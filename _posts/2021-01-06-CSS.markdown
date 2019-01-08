@@ -26,3 +26,5 @@ tags:
 5、：focus-within
 一个元素获得焦点，或，该元素的后代元素获得焦点。划重点，它或它的后代获得焦点。
 这也就意味着，它或它的后代获得焦点，都可以触发 :focus-within。（冒泡性，从可获焦元素开始一直冒泡到根元素 html,由此在获取焦点的时候能够激活很多效果）
+[:focus-within参考文章](https://www.cnblogs.com/coco1s/p/9406413.html)
+
