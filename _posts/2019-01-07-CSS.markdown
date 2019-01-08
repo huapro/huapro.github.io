@@ -1,0 +1,92 @@
+---
+layout:     post
+title:      "CSS 学习"
+subtitle:   "CSS学习"
+date:       2019-01-08  10:55:00
+author:     "Hua"v
+header-img: "img/presale01.jpg"
+catalog: true
+multilingual: false
+tags:
+    - 笔记
+---
+>多看看，多记记
+
+# CSS
+## 一:Force element state
+1、：active  
+:active向活动的链接添加特殊的样式。
+当你点击一个链接时它变成活动链接。（即点击链接时候会产生一个效果）  
+2、：hover  
+:hover在鼠标移到链接上时添加的特殊样式。（鼠v标悬停到连接时产生一个效果）
+3、：focus  
+选择具有焦点的输入元素（即根据焦点确定选中的元素）  
+4、：visited  
+:visited向访问过的链接添加特殊的样式。（即访问过后，链接样式会产生改变以标识）  
+5、：focus-within  
+一个元素获得焦点，或，该元素的后代元素获得焦点。划重点，它或它的后代获得焦点。
+这也就意味着，它或它的后代获得焦点，都可以触发 :focus-within。（冒泡性，从可获焦元素开始一直冒泡到根元素 html,由此在获取焦点的时候能够激活很多效果）
+[focus-within参考文章](https://www.cnblogs.com/coco1s/p/9406413.html)
+
+
+## 二：CSS选择器
+1、.class  
+.intro	选择所有class="intro"的元素  
+2、#id  
+#firstname	选择所有id="firstname"的元素  
+3、*  *	选择所有元素  
+4、element	p	选择所有&lt;p&gt; 元素  
+5、element,element	div,p	选择所有&lt;div&gt;元素和&lt;p&gt;元  
+6、element element	div p	选择&lt;div&gt;元素内的所有&lt;p&gt;元素  
+7、element&gt;element	div&gt;p	选择所有父级是 &lt;div&gt; 元素的 &lt;p&gt; 元素  
+8、element+element	div+p	选择所有紧接着&lt;div&gt;元素之后的&lt;p&gt;元素  
+9、[attribute]	[target]	选择所有带有target属性元素  
+10、[attribute=value]	[target=-blank]	选择所有使用target="-blank"的元素    
+11、[attribute~=value]	[title~=flower]	选择标题属性包含单词"flower"的所有元素
+
+
+## 三：边缘相关
+margin  
+清除周围的（外边框）元素区域。margin **没有背景颜色，是完全透明的**。
+margin 可以单独改变元素的上，下，左，右边距，也可以一次改变所有的属性。  
+padding（填充)  
+当元素的 padding（填充）内边距被清除时，**所释放的区域将会受到元素背景颜色的填充**。  
+单独使用 padding 属性可以改变上下左右的填充。  
+![img](/img/in-post/CSS/margin_padding.png){:height="200px" width="900px"}
+
+## 四：定位
+#### 1、static 定位  
+HTML元素的默认值，即没有定位，元素出现在正常的流中。
+
+静态定位的元素不会受到 top, bottom, left, right影响。
+
+#### 2、fixed 定位
+元素的位置相对于浏览器窗口是固定位置。
+即使窗口是滚动的它也不会移动：
+#### 3、relative 定位  
+相对定位元素的定位是**相对*其*正常位置**。  
+#### 4、absolute 定位  
+绝对定位的元素的位置相对于最近的已定位父元素，如果元素没有已定位的父元素，那么它的位置相对于<html>:
+absolute 定位使元素的位置与文档流无关，因此不占据空间。 
+absolute 定位的元素和其他元素重叠。
+
+#### 5、sticky 定位  
+sticky 英文字面意思是粘，粘贴，所以可以把它称之为粘性定位。
+
+position: sticky; 基于用户的滚动位置来定位。
+
+粘性定位的元素是依赖于用户的滚动，在 position:relative 与 position:fixed 定位之间切换。
+
+它的行为就像 position:relative; 而当页面滚动超出目标区域时，它的表现就像 position:fixed;，它会固定在目标位置。
+
+元素定位表现为在跨越特定阈值前为相对定位，之后为固定定位。
+
+这个特定阈值指的是 top, right, bottom 或 left 之一，换言之，指定 top, right, bottom 或 left 四个阈值其中之一，才可使粘性定位生效。否则其行为与相对定位相同。
+[实例](http://www.runoob.com/try/try.php?filename=trycss_position_sticky)
+
+### 6、重叠的元素  
+元素的定位与文档流无关，所以它们可以覆盖页面上的其它元素
+z-index属性指定了一个元素的堆叠顺序（哪个元素应该放在前面，或后面）
+一个元素可以有正数或负数的堆叠顺序：
+具有更高堆叠顺序的元素总是在较低的堆叠顺序元素的前面。  
+注意： 如果两个定位元素重叠，没有指定z - index，最后定位在HTML代码中的元素将被显示在最前面。
