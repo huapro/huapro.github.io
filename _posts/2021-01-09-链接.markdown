@@ -27,6 +27,34 @@ tags:
 
 [内核组织沟通邮件_按照模块 mail_list](http://vger.kernel.org/vger-lists.html#linux-kernel)
 
+### VIM
+
+[vim doc](https://www.vim.org/docs.php)   
+[vim book](http://www.truth.sk/vim/vimbook-OPL.pdf)
+
+### 快捷键
+#### iterm
+
+标签  
+新建标签：command + t  
+关闭标签：command + w  
+切换标签：command + 数字 command + 左右方向键  
+切换全屏：command + enter  
+查找：command + f、  
+分屏  
+**垂直分屏command+d**  
+水平分屏：command + shift + d  
+（分屏之间）切换屏幕：command + option + 方向键 command + [ 或 command + ]  
+其他 
+```
+清除当前行：ctrl + u、  
+到行首：ctrl + a  
+到行尾：ctrl + e 
+``` 
+查看剪贴板历史：command + shift + h  
+清屏1：command + r  
+清屏2：ctrl + l
+
 
 
 
