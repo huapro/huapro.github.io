@@ -56,6 +56,12 @@ tags:
 清屏2：ctrl + l
 
 
+### Redis
+[Redis各版本下载](http://download.redis.io/releases/)   
+[Redis源码](https://github.com/uglide/RedisDesktopManager/releases/) 
+
+
+
 
 
 
