@@ -21,9 +21,9 @@ setInterval() 方法会不停地调用函数，直到 clearInterval() 被调用�
 
 setInterval(code,millisec[,"lang"])
 参数|描述
----|:--:
+---|:--
 code必需。|要调用的函数或要执行的代码串。
-millisec	|必须。周期性执行或调用 code 之间的时间间隔，以毫秒计。
+millisec |必须。周期性执行或调用 code 之间的时间间隔，以毫秒计。
 
 返回值  
 一个可以传递给 Window.clearInterval() 从而取消对 code 的周期性执行的值。

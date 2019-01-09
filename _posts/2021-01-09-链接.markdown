@@ -1,0 +1,37 @@
+---
+layout:     post
+title:      "各种网址积累"
+subtitle:   "CSS学习"
+date:       2019-01-09  09:39:00
+author:     "Hua"v
+header-img: "img/presale01.jpg"
+catalog: true
+multilingual: false
+tags:
+    - 笔记
+---
+>多看看，多记记
+
+### github markdown
+[github markdwon 官方说明](https://guides.github.com/features/mastering-markdown/)
+
+### linux
+
+[源码下载](https://mirrors.edge.kernel.org/pub/linux/kernel/)
+
+[内核源码在线阅读带跳转](https://lxr.missinglinkelectronics.com/+trees)   
+[内核源码在线阅读带跳转2](http://lxr.free-electrons.com/)  
+
+[内核组织沟通邮件](https://lkml.org/)
+
+
+[内核组织沟通邮件_按照模块 mail_list](http://vger.kernel.org/vger-lists.html#linux-kernel)
+
+
+
+
+
+
+
+
+
