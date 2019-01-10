@@ -1,15 +1,16 @@
 ---
 layout:     post
 title:      "各种网址积累"
-subtitle:   "CSS学习"
+subtitle:   "常用网址积累"
 date:       2019-01-09  09:39:00
-author:     "Hua"v
+author:     "Hua"
 header-img: "img/presale01.jpg"
 catalog: true
 multilingual: false
 tags:
     - 笔记
 ---
+
 >多看看，多记记
 
 ### github markdown
