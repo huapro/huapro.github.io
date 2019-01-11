@@ -71,3 +71,47 @@ Hotspot：全称 Java HotSpot Performance Engine，是 Java 虚拟机的一个�
 │          └─utilities                  一些基本的工具类
 └─test                             单元测试
 ```
+
+```
+$(selector).each(function(index,element))
+each() 方法规定为每个匹配元素规定运行的函数。
+function(index,element)必需。为每个匹配元素规定运行的函数。
+index - 选择器的 index 位置
+element - 当前的元素（也可使用 "this" 选择器）
+
+jquery $.each(data, function (index, value) {
+遍历处理data，可以是数组、DOM、json等，取决于直接给定或者ajax返回的类型
+function (index, value)中index是当前元素的位置，value是值。
+
+jQuery 选择器
+#id	$("#lastname")	id="lastname" 的元素 
+
+^((?!NAVIGATE_MANAGER.tree.tree).)*NAVIGATE_MANAGER.tree((?!NAVIGATE_MANAGER.tree.tree).)*$
+
+
+
+数据库导出
+mysqldump -uroot -p1234 iodn > /usr/20181217.sql
+
+
+mac下输入mysql提示command not found: mysql
+
+解决：
+
+ 
+
+首先：1.打开终端　　输入　　open 　.bash_profile
+
+　　　2.追加　　export PATH=${PATH}:/usr/local/mysql/bin
+
+　　　　　　　　mysql=/usr/local/mysql/bin/mysql
+
+　　　　　　　　mysqladmin=/usr/local/mysql/bin/mysqladmin
+
+　　　3.保存并退出
+打开终端：　　输入source .bash_profile
+
+                          mysql -u xxx -p xxx　
+mybaits 中没有else要用chose when otherwise 代替
+```
+		
