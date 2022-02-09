@@ -28,6 +28,10 @@ tags:
 
 [内核组织沟通邮件_按照模块 mail_list](http://vger.kernel.org/vger-lists.html#linux-kernel)
 
+### Log4j
+
+[Log4j详细教程](https://blog.csdn.net/projectNo/article/details/79411464)
+
 ### VIM
 
 [vim doc](https://www.vim.org/docs.php)   

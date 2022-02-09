@@ -45,3 +45,30 @@ function clock()
 </body>
 </html>
 ```
+
+```javascript
+         $("#detail-attribution").combobox({
+                var:valueForAttri=1,
+                onChange: function (newValue, oldValue) {
+                    debugger;
+                    if (newValue == oldValue)
+					{}
+					else
+					{
+                        if (valueForAttri == 1) {
+                            DIALOG.confirm("更改运营商", "确定更改运营商？", function () {
+
+                                }, function () {
+
+                                    {   valueForAttri = valueForAttri + 1;
+                                        $("#detail-attribution").combobox('setValue', oldValue);
+                                    }
+                                }
+                            );
+                        }
+                        else{valueForAttri=1}
+                }
+            }
+            })
+
+```
