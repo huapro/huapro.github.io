@@ -4,7 +4,7 @@
 
 
 Hi, I am Hua, a java developer engineer.
-Like swimming, read history, like Beijing opera
+Like swimming, read history
 
 
 

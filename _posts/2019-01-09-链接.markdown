@@ -13,7 +13,7 @@ tags:
 
 >多看看，多记记
 
-### github markdown
+### github markdown
 [github markdwon 官方说明](https://guides.github.com/features/mastering-markdown/)
 
 ### linux
