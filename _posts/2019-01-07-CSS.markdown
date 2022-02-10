@@ -1,14 +1,14 @@
 ---
 layout:     post
 title:      "CSS 学习"
-subtitle:   "CSS学习"
-date:       2019-01-08  10:55:00
-author:     "Hua"v
-header-img: "img/presale01.jpg"
+subtitle:   ——CSS 学习
+date:       2019-01-08  15:02 Huapro
+author:     "Hua"
+header-img: "img/网络.jpg"
 catalog: true
 multilingual: false
 tags:
-    - 笔记
+- 杂七杂八
 ---
 >多看看，多记记
 

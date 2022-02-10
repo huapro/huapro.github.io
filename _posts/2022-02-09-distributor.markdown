@@ -1,17 +1,18 @@
 ---
 layout:     post
-title:      "分布式相关概念"
-subtitle:   ——分布式相关概念
-date:       2022-02-08  15:49 Huapro
+title:      "分布式理论"
+subtitle:   ——分布式理论
+date:       2022-02-09  15:02 Huapro
 author:     "Hua"
 header-img: "img/网络.jpg"
 catalog: true
 multilingual: false
 tags:
-- 分布式
+    - 分布式
 ---
 
-> Spring 事务底层原理
+> 分布式理论
+
 
 
 ## 1. 数据库管理系统中事务(transaction)的四个特性：简称ACID（这种特性简称刚性事物）

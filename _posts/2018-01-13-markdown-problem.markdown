@@ -7,7 +7,7 @@ author:     "Hua"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
-    - 杂
+    - 杂七杂八
 ---
 
 > “Yeah It's on. ”
