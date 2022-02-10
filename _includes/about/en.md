@@ -3,8 +3,8 @@
 > Yet another man.
 
 
-Hi, I am Hua, a pre-sale engineer&electric engineer.
-Like swimming, read history, like Beijing opera,bridge
+Hi, I am Hua, a java developer engineer.
+Like swimming, read history, like Beijing opera
 
 
 
